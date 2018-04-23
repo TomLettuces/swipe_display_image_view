@@ -4,14 +4,14 @@
 
 
 
-![ad-image-view-demo](media/15208386184845/ad-image-view-demo.gif)
+![show-gif](static/show-demo.gif)
 
 
 ### 实现分析
 
 从效果上我们可以大致看出是一个两种ItemType的RecyclerView，而且从知乎上来看这个特殊的Item只放了图片，所以重点工作就是写一个自定义ImageView，需要的功能包括展示图片，滑动图片等，现在，我们详细分析下滑动流程，下图是滑动过程的逻辑分析：
 
-![知乎广告栏滑动解析图](media/15208386184845/%E7%9F%A5%E4%B9%8E%E5%B9%BF%E5%91%8A%E6%A0%8F%E6%BB%91%E5%8A%A8%E8%A7%A3%E6%9E%90%E5%9B%BE.png)
+![知乎广告栏滑动解析图](static/知乎广告栏滑动解析图.png)
 
 
 

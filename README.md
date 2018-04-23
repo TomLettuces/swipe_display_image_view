@@ -22,23 +22,23 @@
 全局变量
 
 ```
-    private Context mContext;
-    /**
-     * 展示图片的宽高和Item高度
-     */
-    private int mDisplayWidth, mDisplayHeight, mItemHeight;
-    /**
-     * Item与背景图片滑动距离的相对比例
-     */
-    private float ratio = 1;
-    /**
-     * 图片的滑动区域
-     */
-    private int mDisplayDistance;
-    /**
-     * 图片资源
-     */
-    private Drawable imageDrawable;
+private Context mContext;
+/**
+ * 展示图片的宽高和Item高度
+ */
+private int mDisplayWidth, mDisplayHeight, mItemHeight;
+/**
+ * Item与背景图片滑动距离的相对比例
+ */
+private float ratio = 1;
+/**
+ * 图片的滑动区域
+ */
+private int mDisplayDistance;
+/**
+ * 图片资源
+ */
+private Drawable imageDrawable;
 ```
 
 ```

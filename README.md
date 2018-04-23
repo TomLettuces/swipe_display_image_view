@@ -21,7 +21,7 @@
 
 全局变量
 
-```
+```java
 private Context mContext;
 /**
  * 展示图片的宽高和Item高度
@@ -41,86 +41,86 @@ private int mDisplayDistance;
 private Drawable imageDrawable;
 ```
 
-```
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        mItemHeight = h;
-        imageDrawable = getDrawable();
-        // 使用Item的宽度作为图片的宽度
-        mDisplayWidth = getWidth();
-        // 可以直接用手机屏幕的高度(别忘了减去状态栏高度)，不过滑动起来会相对静止，比较生硬，可以稍微减少此值以添加相对滑动的感觉
-        mDisplayHeight = getScreenHeight(mContext) - getStatusBarHeight(mContext) - 100;
-        // 图片滑动区域
-        mDisplayDistance = mDisplayHeight - mItemHeight;
-    }
+```java
+@Override
+protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+    super.onSizeChanged(w, h, oldw, oldh);
+    mItemHeight = h;
+    imageDrawable = getDrawable();
+    // 使用Item的宽度作为图片的宽度
+    mDisplayWidth = getWidth();
+    // 可以直接用手机屏幕的高度(别忘了减去状态栏高度)，不过滑动起来会相对静止，比较生硬，可以稍微减少此值以添加相对滑动的感觉
+    mDisplayHeight = getScreenHeight(mContext) - getStatusBarHeight(mContext) - 100;
+    // 图片滑动区域
+    mDisplayDistance = mDisplayHeight - mItemHeight;
+}
 ```
 
 在onDraw中进行状态保存和位移
 
-```
-    @Override
-    protected void onDraw(Canvas canvas) {
-        imageDrawable.setBounds(0, 0, mDisplayWidth, mDisplayHeight);
-        canvas.save();
-        canvas.translate(0, -mDisplayDistance * ratio);
-        Log.d("SwipeDisplayImageView", "translateY = " + -mDisplayDistance * ratio);
-        super.onDraw(canvas);
-        canvas.restore();
-    }
+```java
+@Override
+protected void onDraw(Canvas canvas) {
+    imageDrawable.setBounds(0, 0, mDisplayWidth, mDisplayHeight);
+    canvas.save();
+    canvas.translate(0, -mDisplayDistance * ratio);
+    Log.d("SwipeDisplayImageView", "translateY = " + -mDisplayDistance * ratio);
+    super.onDraw(canvas);
+    canvas.restore();
+}
 ```
 
 在RecyclerView滑动监听中调用，用来刷新Item在图片的位置比例，核心逻辑
 
-```
-    /**
-     * @param itemTop            itemView.getTop()
-     * @param recyclerViewHeight recyclerView.getHeight()
-     */
-    public void refreshRatio(int itemTop, int recyclerViewHeight) {
-        // 背景图片位移的范围
-        int scope = recyclerViewHeight - mItemHeight;
-        ratio = itemTop * 1.0f / scope;
-        Log.d("SwipeDisplayImageView", "ratio = " + ratio);
-        if (ratio < 0) {
-            ratio = 0;
-        }
-        if (ratio > 1) {
-            ratio = 1;
-        }
-        invalidate();
+```java
+/**
+ * @param itemTop            itemView.getTop()
+ * @param recyclerViewHeight recyclerView.getHeight()
+ */
+public void refreshRatio(int itemTop, int recyclerViewHeight) {
+    // 背景图片位移的范围
+    int scope = recyclerViewHeight - mItemHeight;
+    ratio = itemTop * 1.0f / scope;
+    Log.d("SwipeDisplayImageView", "ratio = " + ratio);
+    if (ratio < 0) {
+        ratio = 0;
     }
+    if (ratio > 1) {
+        ratio = 1;
+    }
+    invalidate();
+}
 ```
 
 RecyclerView添加滑动监听
 
-```
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Overrid
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                int firstPosition = mLinearLayoutManager.findFirstCompletelyVisibleItemPosition();
-                int lastPosition = mLinearLayoutManager.findLastCompletelyVisibleItemPosition();
-                // 逻辑处理的范围是从Item完全进入到完全离开
-                for (int i = firstPosition; i <= lastPosition; i++) {
-                    RecyclerView.ViewHolder viewHolder = mRecyclerView.findViewHolderForAdapterPosition(i);
-                    // 判断ItemType
-                    if (viewHolder.getItemViewType() == TYPE_AD) {
-                        View itemView = viewHolder.itemView;
-                        int top = itemView.getTop();
-                        int height = recyclerView.getHeight();
+```java
+mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+    @Overrid
+    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+        super.onScrolled(recyclerView, dx, dy);
+        int firstPosition = mLinearLayoutManager.findFirstCompletelyVisibleItemPosition();
+        int lastPosition = mLinearLayoutManager.findLastCompletelyVisibleItemPosition();
+        // 逻辑处理的范围是从Item完全进入到完全离开
+        for (int i = firstPosition; i <= lastPosition; i++) {
+            RecyclerView.ViewHolder viewHolder = mRecyclerView.findViewHolderForAdapterPosition(i);
+            // 判断ItemType
+            if (viewHolder.getItemViewType() == TYPE_AD) {
+                View itemView = viewHolder.itemView;
+                int top = itemView.getTop();
+                int height = recyclerView.getHeight();
 
-                        SwipeDisplayImageView swipeDisplayImageView = itemView.findViewById(R.id.iv_swipe_display);
-                        swipeDisplayImageView.refreshSwipeRatio(top, height);
-                    }
-                }
+                SwipeDisplayImageView swipeDisplayImageView = itemView.findViewById(R.id.iv_swipe_display);
+                swipeDisplayImageView.refreshSwipeRatio(top, height);
             }
-        });
+        }
+    }
+});
 ```
 
 xml代码
 
-```
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"

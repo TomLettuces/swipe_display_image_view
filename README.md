@@ -19,7 +19,6 @@
 
 #### 自定义View中的核心代码：
 
-全局变量
 
 ```java
 private Context mContext;
